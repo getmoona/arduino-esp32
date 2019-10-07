@@ -87,6 +87,7 @@ public:
 
 private:
 	BLEServer();
+	~BLEServer();
 	friend class BLEService;
 	friend class BLECharacteristic;
 	friend class BLEDevice;
