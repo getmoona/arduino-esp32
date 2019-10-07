@@ -225,6 +225,8 @@ void BLECharacteristic::handleGATTServerEvent(
 		// - uint8_t exec_write_flag - Either ESP_GATT_PREP_WRITE_EXEC or ESP_GATT_PREP_WRITE_CANCEL
 		//
 		case ESP_GATTS_EXEC_WRITE_EVT: {
+			if(m_writeEvt){
+				m_writeEvt = false;
 			if (param->exec_write.exec_write_flag == ESP_GATT_PREP_WRITE_EXEC) {
 				m_value.commit();
 				if (m_pCallbacks != nullptr) {
@@ -240,6 +242,7 @@ void BLECharacteristic::handleGATTServerEvent(
 					param->write.trans_id, ESP_GATT_OK, nullptr);
 			if (errRc != ESP_OK) {
 				log_e("esp_ble_gatts_send_response: rc=%d %s", errRc, GeneralUtils::errorToString(errRc));
+			}
 			}
 			break;
 		} // ESP_GATTS_EXEC_WRITE_EVT
@@ -285,8 +288,12 @@ void BLECharacteristic::handleGATTServerEvent(
 			if (param->write.handle == m_handle) {
 				if (param->write.is_prep) {
 					m_value.addPart(param->write.value, param->write.len);
+					m_writeEvt = true;
 				} else {
 					setValue(param->write.value, param->write.len);
+					if (m_pCallbacks != nullptr && param->write.is_prep != true) {
+						m_pCallbacks->onWrite(this); // Invoke the onWrite callback handler.
+					}
 				}
 
 				log_d(" - Response to write event: New value: handle: %.2x, uuid: %s",
@@ -313,10 +320,6 @@ void BLECharacteristic::handleGATTServerEvent(
 						log_e("esp_ble_gatts_send_response: rc=%d %s", errRc, GeneralUtils::errorToString(errRc));
 					}
 				} // Response needed
-
-				if (m_pCallbacks != nullptr && param->write.is_prep != true) {
-					m_pCallbacks->onWrite(this); // Invoke the onWrite callback handler.
-				}
 			} // Match on handles.
 			break;
 		} // ESP_GATTS_WRITE_EVT
