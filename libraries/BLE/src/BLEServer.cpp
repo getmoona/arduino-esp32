@@ -318,11 +318,11 @@ void BLEServer::registerApp(uint16_t m_appId) {
  * @return N/A
  */
 void BLEServer::unregisterApp(uint16_t i_appId) {
-	ESP_LOGD(LOG_TAG, ">> unregisterApp - %d", i_appId);
+	log_v(">> unregisterApp - %d", i_appId);
 	m_semaphoreUnregisterAppEvt.take("unregisterApp"); // Take the mutex, will be released by ESP_GATTS_REG_EVT event.
 	::esp_ble_gatts_app_unregister(m_gatts_if);
 	m_semaphoreUnregisterAppEvt.wait("unregisterApp");
-	ESP_LOGD(LOG_TAG, "<< unregisterApp");
+	log_v("<< unregisterApp");
 } // unregisterApp
 
 
