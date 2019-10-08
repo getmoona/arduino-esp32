@@ -95,11 +95,11 @@ void BLEAdvertising::setMaxInterval(uint16_t maxinterval) {
 
 void BLEAdvertising::setMinPreferred(uint16_t mininterval) {
 	m_advData.min_interval = mininterval;
-} // 
+} //
 
 void BLEAdvertising::setMaxPreferred(uint16_t maxinterval) {
 	m_advData.max_interval = maxinterval;
-} // 
+} //
 
 void BLEAdvertising::setScanResponse(bool set) {
 	m_scanResp = set;
@@ -262,7 +262,7 @@ void BLEAdvertising::stop() {
 
 void BLEAdvertising::setDeviceAddress(esp_bd_addr_t addr, esp_ble_addr_type_t type)
 {
-	log_v(">> setPrivateAddress")
+	log_v(">> setPrivateAddress");
 
 	m_advParams.own_addr_type = type;
 	esp_err_t errRc = esp_ble_gap_set_rand_addr((uint8_t*)addr);
@@ -271,7 +271,7 @@ void BLEAdvertising::setDeviceAddress(esp_bd_addr_t addr, esp_ble_addr_type_t ty
 		log_e("esp_ble_gap_set_rand_addr: rc=%d %s", errRc, GeneralUtils::errorToString(errRc));
 		return;
 	}
-	log_v("<< setPrivateAddress")
+	log_v("<< setPrivateAddress");
 } // setPrivateAddress
 
 /**
