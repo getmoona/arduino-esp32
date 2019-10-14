@@ -47,7 +47,7 @@ static const char* LOG_TAG = "BLEDevice";
 BLEServer* BLEDevice::m_pServer = nullptr;
 BLEScan*   BLEDevice::m_pScan   = nullptr;
 BLEClient* BLEDevice::m_pClient = nullptr;
-bool       initialized          = false;  
+bool       initialized          = false;
 esp_ble_sec_act_t BLEDevice::m_securityLevel = (esp_ble_sec_act_t)0;
 BLESecurityCallbacks* BLEDevice::m_securityCallbacks = nullptr;
 uint16_t   BLEDevice::m_localMTU = 23;  // not sure if this variable is useful
@@ -354,7 +354,7 @@ gatts_event_handler BLEDevice::m_customGattsHandler = nullptr;
 		}
 
 #ifndef CLASSIC_BT_ENABLED
-		esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);  
+		esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
 #endif
 		esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
 		errRc = esp_bt_controller_init(&bt_cfg);
@@ -503,13 +503,14 @@ void BLEDevice::whiteListAdd(BLEAddress address) {
  * @brief Remove an entry from the BLE white list.
  * @param [in] address The address to remove from the white list.
  */
-void BLEDevice::whiteListRemove(BLEAddress address) {
+esp_err_t BLEDevice::whiteListRemove(BLEAddress address) {
 	log_v(">> whiteListRemove: %s", address.toString().c_str());
 	esp_err_t errRc = esp_ble_gap_update_whitelist(false, *address.getNative());  // False to remove an entry.
 	if (errRc != ESP_OK) {
 		log_e("esp_ble_gap_update_whitelist: rc=%d %s", errRc, GeneralUtils::errorToString(errRc));
 	}
 	log_v("<< whiteListRemove");
+	return errRc;
 } // whiteListRemove
 
 /*
@@ -561,7 +562,7 @@ BLEAdvertising* BLEDevice::getAdvertising() {
 		log_i("create advertising");
 	}
 	log_d("get advertising");
-	return m_bleAdvertising; 
+	return m_bleAdvertising;
 }
 
 void BLEDevice::startAdvertising() {
@@ -630,8 +631,8 @@ void BLEDevice::removePeerDevice(uint16_t conn_id, bool _client) {
     if (release_memory) {
         esp_bt_controller_mem_release(ESP_BT_MODE_BTDM);  // <-- require tests because we released classic BT memory and this can cause crash (most likely not, esp-idf takes care of it)
     } else {
-        initialized = false;   
-    } 
+        initialized = false;
+    }
 #endif
 }
 

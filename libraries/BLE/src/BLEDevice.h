@@ -41,7 +41,7 @@ public:
 	static void        setValue(BLEAddress bdAddress, BLEUUID serviceUUID, BLEUUID characteristicUUID, std::string value);   // Set the value of a characteristic on a service on a server.
 	static std::string toString();        // Return a string representation of our device.
 	static void        whiteListAdd(BLEAddress address);    // Add an entry to the BLE white list.
-	static void        whiteListRemove(BLEAddress address); // Remove an entry from the BLE white list.
+	static esp_err_t   whiteListRemove(BLEAddress address); // Remove an entry from the BLE white list.
 	static void		   setEncryptionLevel(esp_ble_sec_act_t level);
 	static void		   setSecurityCallbacks(BLESecurityCallbacks* pCallbacks);
 	static esp_err_t   setMTU(uint16_t mtu);
@@ -71,7 +71,7 @@ private:
 	static BLESecurityCallbacks* m_securityCallbacks;
 	static BLEAdvertising* m_bleAdvertising;
 	static esp_gatt_if_t getGattcIF();
-	static std::map<uint16_t, conn_status_t> m_connectedClientsMap;	
+	static std::map<uint16_t, conn_status_t> m_connectedClientsMap;
 
 	static void gattClientEventHandler(
 		esp_gattc_cb_event_t      event,
